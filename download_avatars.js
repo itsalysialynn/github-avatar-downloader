@@ -20,13 +20,23 @@ function downloadImageByURL(url, filePath) {
 
 }
 
-getRepoContributors(process.argv[2], process.argv[3], function(err, response, body) {
-  var parsedResults = JSON.parse(body);
-  for (var i = 0; i < parsedResults.length; i++) {
-    var avatarUrl =  parsedResults[i]["avatar_url"];
-    downloadImageByURL(avatarUrl, `avatars/${i}.jpg`);
+getRepoContributors(process.argv[2], process.argv[3], function(err, result, body) {
+
+  if (err || result.statusCode !== 200) {
+    console.log('Error retrieving avatars:', err);
+    console.log('HTTP status code:', result.statusCode);
+    console.log('Error message:', result.statusMessage);
+  } else {
+    let parsedResults = JSON.parse(body);
+
+    for (var i = 0 ; i < parsedResults.length; i++) {
+      let entry = parsedResults[i];
+      let avatarUrl = entry['avatar_url'];
+      downloadingImageByURL(avatarUrl, `avatars/${entry.login}.jpg`);
+    }
   }
 });
+
 
 
 
